@@ -8,7 +8,7 @@
  * that starts the plugin.
  *
  * @wordpress-plugin
- * Plugin Name: Camptix - Workshop Booking System
+ * Plugin Name: CampTix - Workshop Booking System
  * Plugin URI:  https://neliosoftware.com/
  * Description: This extension allows WordCamp attendees to book a seat in Workshops.
  * Version:     0.0.1
@@ -29,9 +29,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }//end if
 
 /**
- * Camptix_WBS
+ * CampTix_WBS
  */
-class Camptix_WBS {
+class CampTix_WBS {
 
 	private static $instance = null;
 
@@ -82,7 +82,7 @@ class Camptix_WBS {
 }//end class
 
 function camptix_wbs() {
-	return Camptix_WBS::instance();
+	return CampTix_WBS::instance();
 }//end camptix_wbs()
 add_action( 'plugins_loaded', 'camptix_wbs' );
 

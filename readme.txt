@@ -1,4 +1,4 @@
-=== Camptix - Workshop Booking System ===
+=== CampTix - Workshop Booking System ===
 Contributors: davilera
 Donate Link: https://neliosoftware.com/
 Tags: event ticketing, ticketing
@@ -9,11 +9,11 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Camptix - Workshop Booking System made easy.
+CampTix - Workshop Booking System made easy.
 
 == Description ==
 
-This plugin adds a Workshop Booking System into Camptix, so that WordCamp attendees can book a seat.
+This plugin adds a Workshop Booking System into CampTix, so that WordCamp attendees can book a seat.
 
 **Features**
 

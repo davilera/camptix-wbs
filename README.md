@@ -1,6 +1,6 @@
-# Camptix - Workshop Booking System
+# CampTix - Workshop Booking System
 
-Adds a Workshop Booking System into Camptix, so that WordCamp attendees can book a seat.
+Adds a Workshop Booking System into CampTix, so that WordCamp attendees can book a seat.
 
 ## Features
 
@@ -39,7 +39,7 @@ The plugins also provides these additional commands:
 
 ## License
 
-Camptix - Workshop Booking System is licensed under the GPL v2 or later.
+CampTix - Workshop Booking System is licensed under the GPL v2 or later.
 
 > This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.
 >
@@ -51,5 +51,5 @@ A copy of the license is included in the root of the plugin’s directory. The f
 
 # Credits
 
-Camptix - Workshop Booking System (`camptix-wbs`) was created in April 2019 by [David Aguilera](http://twitter.com/davilera/).
+CampTix - Workshop Booking System (`camptix-wbs`) was created in April 2019 by [David Aguilera](http://twitter.com/davilera/).
 
