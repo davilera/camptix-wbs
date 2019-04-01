@@ -83,15 +83,6 @@ const config = {
 				],
 			},
 
-			// SVG files.
-			{
-				test: /.svg$/,
-				use: [
-					{
-						loader: 'svg-react-loader',
-					},
-				],
-			},
 		],
 	},
 
@@ -122,15 +113,29 @@ const config = {
 
 module.exports = [
 
-	Object.assign( {
+	{
 		entry: {
-			admin: [ './assets/src/js/admin/admin.js' ],
+			public: './assets/src/sass/public/public.scss',
 		},
 		output: {
-			path: path.join( __dirname, './assets/dist/' ),
-			filename: 'js/[name].js',
+			path: path.resolve( __dirname, './assets/dist/' ),
+			filename: '[name].css',
 		},
-	}, config ),
+		module: {
+			rules: [
+				{
+					test: /\.scss$/,
+					loader: ExtractTextPlugin.extract( [ 'css-loader', 'sass-loader' ] ),
+				},
+			],
+		},
+		plugins: [
+			new ExtractTextPlugin( {
+				filename: '[name].css',
+				allChunks: true,
+			} ),
+		],
+	},
 
 ];
 

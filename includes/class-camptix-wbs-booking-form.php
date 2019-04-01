@@ -14,12 +14,37 @@ class CampTix_WBS_Booking_Form {
 
 	public function init_hooks() {
 
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		add_action( 'camptix_form_edit_attendee_additional_info', [ $this, 'maybe_save_workshops' ] );
 		add_action( 'camptix_form_edit_attendee_after_questions', [ $this, 'render' ] );
 
 	}//end init_hooks()
 
+	public function enqueue_styles() {
+
+		$camptix_wbs = camptix_wbs();
+		wp_enqueue_style(
+			'camptix-wbs',
+			$camptix_wbs->plugin_url . '/assets/dist/public.css',
+			[],
+			$camptix_wbs->plugin_version
+		);
+
+	}//end enqueue_styles()
+
+	public function maybe_save_workshops() {
+
+		if ( $this->is_saving() ) {
+			return;
+		}//end if
+
+		$new_preferred_options = $this->recover_preferred_options_from_post_data();
+
+	}//end maybe_save_workshops()
+
 	public function render() {
 
+		// phpcs:disable
 		$this->workshops = array(
 			[ 'id' => 1, 'title' => 'The big, bad content planning workshop', 'speaker' => 'Vassilena Valchanova', 'permalink' => 'https://google.es' ],
 			[ 'id' => 2, 'title' => 'REST API', 'speaker' => 'Micah Wood', 'permalink' => 'https://google.es' ],
@@ -28,55 +53,39 @@ class CampTix_WBS_Booking_Form {
 			[ 'id' => 5, 'title' => 'Pause. Think. Create.', 'speaker' => 'Dennis Hodges', 'permalink' => 'https://google.es' ],
 			[ 'id' => 6, 'title' => 'Deploying a WordPress web server in minutes', 'speaker' => 'George Gkouvousis', 'permalink' => 'https://google.es' ],
 		);
-		$this->preferred_options = [ 5, 2 ]; // TODO
+		// phpcs:enable
+
 		$this->number_of_options = 2;
-
-?>
-<style>
-.tix-wbs * {
-	word-wrap: normal;
-	word-break: normal;
-}
-.tix-workshops {
-	margin-left: 0;
-	padding: 0;
-}
-.tix-workshop {
-	display: flex;
-	padding: 0.5em 1em;
-}
-.tix-workshop:nth-child( even ) {
-	background: #f6f6f6;
-}
-.tix-workshop > * {
-	min-width: 2em;
-}
-.tix-workshop.tix-none {
-	min-height: 2em;
-}
-.tix-workshop-title-and-speaker {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	margin-right: 1em;
-	margin-bottom: 0.5em;
-}
-.tix-by-line {
-	color: grey;
-	font-size: 0.8em;
-}
-.tix-workshop-speaker {
-	font-style: italic;
-}
-.tix-workshop-option {
-text-align: center;
-}
-</style>
-<?php
-
+		$this->preferred_options = $this->load_preferred_options();
 		$this->render_booking_form();
 
 	}//end render()
+
+	private function is_saving() {
+
+		return isset( $_POST['tix_attendee_save'] ); // phpcs:ignore
+
+	}//end is_saving()
+
+	private function recover_preferred_options_from_post_data() {
+
+		$result = array();
+		for ( $i = 0; $i < $this->number_of_options; ++$i ) {
+			$result[ $i ] = absint( $_POST['tix_workshop_preferences'][ $i ] ); //phpcs:ignore
+		}//end for
+		return $result;
+
+	}//end recover_preferred_options_from_post_data()
+
+	private function load_preferred_options() {
+
+		if ( $this->is_saving() ) {
+			return $this->recover_preferred_options_from_post_data();
+		}//end if
+
+		return [ 5, 2 ];
+
+	}//end load_preferred_options()
 
 	private function render_booking_form() {
 	?>
@@ -105,7 +114,7 @@ text-align: center;
 		echo '<span class="tix-workshop-title-and-speaker"></span>';
 
 		for ( $i = 1; $i <= $this->number_of_options; ++$i ) {
-			echo '<span class="tix-workshop-option">' . $i . '</span>';
+			echo '<span class="tix-workshop-option">' . esc_html( $i ) . '</span>';
 		}//end for
 
 		echo '</li>';
@@ -114,12 +123,14 @@ text-align: center;
 
 	private function render_no_workshop() {
 
-		$this->render_workshop( array(
-			'id' => 0,
-			'title' => _x( 'No Workshop', 'text', 'camptix-wbs' ),
-			'speaker' => false,
-			'permalink' => false,
-		) );
+		$this->render_workshop(
+			array(
+				'id'        => 0,
+				'title'     => _x( 'No Workshop', 'text', 'camptix-wbs' ),
+				'speaker'   => false,
+				'permalink' => false,
+			)
+		);
 
 	}//end render_no_workshop()
 
@@ -149,7 +160,7 @@ text-align: center;
 		$title     = $this->get_title( $workshop );
 		$byspeaker = $this->get_by_speaker( $workshop );
 
-		printf( '<span class="tix-workshop-title-and-speaker">%s%s</span>', $title, $byspeaker );
+		printf( '<span class="tix-workshop-title-and-speaker">%s%s</span>', $title, $byspeaker ); // phpcs:ignore
 
 	}//end render_workshop_title_and_speaker()
 
@@ -177,6 +188,7 @@ text-align: center;
 		}//end if
 
 		return sprintf(
+			/* translators: speaker name */
 			' <span class="tix-by-line">' . esc_html_x( 'by %s', 'text', 'camptix-wbs' ) . '</span>',
 			sprintf(
 				'<span class="tix-workshop-speaker">%s</span>',
@@ -204,8 +216,8 @@ text-align: center;
 		echo '<span class="tix-workshop-option">';
 		printf(
 			'<input type="radio" name="tix_workshop_preferences[%s]" value="%s" %s />',
-			$option_id,
-			$workshop_id,
+			esc_attr( $option_id ),
+			esc_attr( $workshop_id ),
 			checked( $workshop_id, $option_value, false )
 		);
 		echo '</span>';
