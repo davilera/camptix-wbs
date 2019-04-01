@@ -45,6 +45,7 @@ class CampTix_WBS {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 			self::$instance->init_options();
+			self::$instance->load_dependencies();
 			self::$instance->init_hooks();
 		}//end if
 
@@ -62,9 +63,16 @@ class CampTix_WBS {
 
 	}//end init_options()
 
+	public function load_dependencies() {
+
+		require $this->plugin_path . '/includes/class-camptix-wbs-booking-form.php';
+
+	}//end load_dependencies()
+
 	public function init_hooks() {
 
 		add_action( 'init', [ $this, 'plugin_data_init' ] );
+		add_action( 'init', [ new Camptix_WBS_Booking_Form(), 'init_hooks' ] );
 
 	}//end init_hooks()
 
